@@ -31,5 +31,24 @@ contract Lottery {
         return address(this).balance;
     }
 
+    //function to get random int
+    function random() public view returns(uint) {
+        return uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, players.length)));
+    }
 
+    //function to pick winner
+    function pickWinner() public onlyManager {
+        require(players.length > 3);
+        //get random int
+        uint r = random();
+        address payable winner;
+        //getting a random index
+        uint index = r % players.length;
+        //setting winner
+        winner = players[index];
+        //transfering the bal to winner
+        winner.transfer(getBalance());
+        //resetting players for next round
+        players = new address payable[](0);
+    }
 }
